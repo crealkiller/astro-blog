@@ -1,0 +1,112 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Card from '../../components/Card.astro';
+
+const posts = await Astro.glob('./*.md');
+const sortedPosts = posts.sort((a, b) => new Date(b.frontmatter.date) - new Date(a.frontmatter.date));
+---
+
+<Layout title="Blog">
+	<main>
+		<h1>My Blog</h1>
+		<p class="description">Welcome to my blog! Here I share my thoughts, tutorials, and experiences.</p>
+		
+		<div class="posts-grid">
+			{sortedPosts.map(post => (
+				<article class="post-card">
+					<a href={`/blog/${post.frontmatter.slug}`}>
+						<h2>{post.frontmatter.title}</h2>
+						<p class="post-excerpt">{post.frontmatter.excerpt}</p>
+						<div class="post-meta">
+							<time datetime={post.frontmatter.date}>{new Date(post.frontmatter.date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+							{post.frontmatter.tags && (
+								<div class="tags">
+									{post.frontmatter.tags.map(tag => (
+										<span class="tag">#{tag}</span>
+									))}
+								</div>
+							)}
+						</div>
+					</a>
+				</article>
+			))}
+		</div>
+	</main>
+</Layout>
+
+<style>
+	main {
+		margin: auto;
+		padding: 2rem 1rem;
+		width: 800px;
+		max-width: calc(100% - 2rem);
+		color: white;
+	}
+	h1 {
+		font-size: 3rem;
+		font-weight: 700;
+		line-height: 1;
+		text-align: center;
+		margin-bottom: 1rem;
+		background-image: var(--accent-gradient);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		background-size: 400%;
+		background-position: 0%;
+	}
+	.description {
+		text-align: center;
+		font-size: 1.2rem;
+		margin-bottom: 3rem;
+		color: #a3a3a3;
+	}
+	.posts-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+		gap: 2rem;
+	}
+	.post-card {
+		background: #23262d;
+		border-radius: 12px;
+		padding: 1.5rem;
+		transition: transform 0.3s ease, box-shadow 0.3s ease;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+	}
+	.post-card:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	}
+	.post-card a {
+		text-decoration: none;
+		color: inherit;
+	}
+	.post-card h2 {
+		font-size: 1.5rem;
+		margin: 0 0 0.75rem 0;
+		color: white;
+	}
+	.post-excerpt {
+		color: #a3a3a3;
+		line-height: 1.6;
+		margin-bottom: 1rem;
+	}
+	.post-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		font-size: 0.9rem;
+		color: #737373;
+	}
+	.tags {
+		display: flex;
+		gap: 0.5rem;
+		flex-wrap: wrap;
+	}
+	.tag {
+		background: rgba(136, 58, 234, 0.2);
+		color: rgb(var(--accent-light));
+		padding: 0.25rem 0.5rem;
+		border-radius: 4px;
+		font-size: 0.8rem;
+	}
+</style>
